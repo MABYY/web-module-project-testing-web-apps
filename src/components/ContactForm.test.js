@@ -27,7 +27,7 @@ test('renders ONE error message if user enters less then 5 characters into first
 });
 
 test('renders THREE error messages if user enters no values into any fields.', async () => {
-    render(<ContactForm />);;
+    render(<ContactForm />);
     const submitButton = screen.getByRole("button");
     userEvent.click(submitButton)
     await waitFor(()=>{
@@ -38,17 +38,21 @@ test('renders THREE error messages if user enters no values into any fields.', a
 
 test('renders ONE error message if user enters a valid first name and last name but no email.', async () => {
     render(<ContactForm />);
+
     const firstNameField = screen.getByLabelText(/first name*/i);
-    userEvent.type(firstNameField,"maby");
+    userEvent.type(firstNameField,"mabyy");
+
     const lastNameField = screen.getByLabelText(/last name*/i);
     userEvent.type(lastNameField,"lambda");
+
+    const emailField = screen.getByLabelText(/email*/i);
+    userEvent.type(emailField,"");
 
     const button = screen.getByRole("button");
     userEvent.click(button);
 
-    // const errormessage = await screen.findByTestId('error');
-    // expect(errormessage).toHaveLength(1);
- 
+    const errorMessages = await screen.queryAllByTestId("error");
+    expect(errorMessages).toHaveLength(1)
 
 });
 
@@ -73,10 +77,11 @@ test('renders "lastName is a required field" if an last name is not entered and 
 test('renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.', async () => {
     render(<ContactForm />);
     const firstNameField = screen.getByLabelText(/first name*/i);
-    userEvent.type(firstNameField,"maby");
     const lastNameField = screen.getByLabelText(/last name*/i);
-    userEvent.type(lastNameField,"lambda");
     const emailField = screen.getByLabelText(/email*/i);
+    
+    userEvent.type(firstNameField,"mabyy");
+    userEvent.type(lastNameField,"lambda");
     userEvent.type(emailField,"maby@lambda.com");
 
     const submitButton = screen.getByRole("button");
@@ -84,45 +89,51 @@ test('renders all firstName, lastName and email text when submitted. Does NOT re
 
 
     await waitFor(()=>{
-        const firstnameDisplay = screen.queryByText("maby");
+        const firstnameDisplay = screen.queryByText("mabyy");
         const lastnameDisplay = screen.queryByText("lambda");
         const emailDisplay = screen.queryByText("maby@lambda.com");
         const msgDisplay = screen.queryByTestId("messageDisplay");
-
-        // expect(firstnameDisplay).toBeInTheDocument();
-        // expect(lastnameDisplay).toBeInTheDocument();
-        // expect(emailDisplay).toBeInTheDocument();
-        // expect(msgDisplay).not.toBeInTheDocument();
-    });
-});
-
-test('renders all fields text when all fields are submitted.', async () => {
-    render(<ContactForm />);
-
-    const firstNameField = screen.getByLabelText(/First Name*/i);
-    userEvent.type(firstNameField,"maby");
-    const lastNameField = screen.getByLabelText(/Last Name*/i);
-    userEvent.type(lastNameField,"lambda");
-    const emailField = screen.getByLabelText(/Email*/i);
-    userEvent.type(emailField,"maby@lambda.com");
-    const messageField = screen.getByLabelText(/Message*/i);
-    userEvent.type(messageField,"Message--Text");
-
-    const button = screen.findByRole("button");
-    userEvent.click(button);
-
-    await waitFor(()=>{
-        const firstnameDisplay = screen.queryByText(/maby/i);
-        const lastnameDisplay = screen.queryByText(/ambda/i);
-        const emailDisplay = screen.queryByText(/maby@lambda.com/i);
-        const msgDisplay = screen.queryByText(/Message--Text/i);
 
         expect(firstnameDisplay).toBeInTheDocument();
         expect(lastnameDisplay).toBeInTheDocument();
         expect(emailDisplay).toBeInTheDocument();
         expect(msgDisplay).not.toBeInTheDocument();
     });
+});
 
+test('renders all fields text when all fields are submitted.', async () => {
+    render(<ContactForm />);
+    const firstNameField = screen.getByLabelText(/first name*/i);
+    const lastNameField = screen.getByLabelText(/last name*/i);
+    const emailField = screen.getByLabelText(/email*/i);
+    const messageField = screen.getByLabelText(/message/i);
+    
+    userEvent.type(firstNameField,"mabyy");
+    userEvent.type(lastNameField,"lambda");
+    userEvent.type(emailField,"maby@lambda.com");
+    userEvent.type(messageField,"thisisamessage");
+
+    const submitButton = screen.getByRole("button");
+    userEvent.click(submitButton);
+
+    await waitFor(()=>{
+
+        const firstnameDisplay = screen.queryByText("mabyy");
+        const lastnameDisplay = screen.queryByText("lambda");
+        const emailDisplay = screen.queryByText("maby@lambda.com");
+        const messageDisplay = screen.queryByTestId("messageDisplay");
+
+        expect(firstnameDisplay).toBeInTheDocument();
+        expect(lastnameDisplay).toBeInTheDocument();
+        expect(emailDisplay).toBeInTheDocument();
+        expect(messageDisplay).toBeInTheDocument();
+
+    });
+
+
+
+        
+  
 });
 
 // https://testing-library.com/docs/queries/about/
